@@ -1,40 +1,50 @@
 import time
+import logging
 from dotenv import load_dotenv
 from src.database import listar_contatos
 from src.messaging import enviar_mensagem_whatsapp
 
-def main():
+# configuração global de Logs (exibe no formato: ANO-MÊS-DIA HORA - NÍVEL - MENSAGEM)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 
+logger = logging.getLogger(__name__)
+
+def main():
     load_dotenv()
     
-    print("Iniciando o processo de envio de mensagens...")
+    logger.info("Iniciando o processo de envio de mensagens de ponta a ponta...")
     
-    # busca os contatos no supabase
     contatos = listar_contatos()
     
     if not contatos:
-        print("Nenhum contato encontrado no banco de dados.")
+        logger.warning("Nenhum contato foi processado ou a lista retornou vazia devido a falhas.")
         return
         
-    print(f"Encontrado(s) {len(contatos)} contato(s) para envio.\n")
+    logger.info(f"Total de {len(contatos)} contato(s) carregado(s) para processamento.\n")
     
-    # percorre a lista de contatos e envia as mensagens uma a uma
     for contato in contatos:
         nome = contato.get("nome")
         telefone = contato.get("telefone")
         
-        print(f"Enviando mensagem para {nome} ({telefone})...")
+        if not nome or not telefone:
+            logger.warning("Contato com dados incompletos encontrado no banco. Pulando...")
+            continue
+            
+        logger.info(f"Processando envio para: {nome} ({telefone})")
         
         sucesso = enviar_mensagem_whatsapp(nome, telefone)
         
-        if sucesso:
-            print(f"Mensagem enviada com sucesso para {nome}!")
-        else:
-            print(f"Falha ao enviar mensagem para {nome}.")
+        if not sucesso:
+            logger.error(f"Não foi possível entregar a mensagem para {nome}. Verifique os logs anteriores.")
             
+        # intervalo de segurança entre envios
         time.sleep(2)
         
-    print("\nProcesso finalizado!")
+    logger.info("Processo finalizado com sucesso!")
 
 if __name__ == "__main__":
     main()
