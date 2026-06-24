@@ -32,10 +32,11 @@ CREATE TABLE contatos (
     nome VARCHAR(100) NOT NULL,
     telefone VARCHAR(20) NOT NULL
 );
+
 2. Variáveis de Ambiente (.env)
 Clone este repositório e, na raiz do projeto, crie um arquivo chamado .env baseando-se no modelo fornecido no .env.example:
 
-## Snippet de código
+Snippet de código:
 SUPABASE_URL=seu_url_do_supabase
 SUPABASE_KEY=sua_chave_public_anon_do_supabase
 ZAPI_INSTANCE_ID=id_da_sua_instancia_zapi
@@ -43,6 +44,7 @@ ZAPI_TOKEN=token_da_sua_instancia_zapi
 
 3. Instalação das Dependências
 Crie e ative o seu ambiente virtual (venv) e instale as bibliotecas necessárias utilizando o requirements.txt:
+
 
 Bash
 # Criar o ambiente virtual
@@ -56,6 +58,7 @@ source .venv/bin/activate
 
 # Instalar dependências
 pip install -r requirements.txt
+
 
 # COMO EXEUTAR O PROJETO
 Com o ambiente virtual ativo e o arquivo .env devidamente preenchido, basta rodar o arquivo principal na raiz do projeto:
